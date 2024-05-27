@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CSS 3D云标签动态效果 www.bootstrapmb.com</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<script>
+	function explodeTags(event) {
+		event.preventDefault();
+		const tags = document.querySelectorAll('.tagcloud-tag');
+		tags.forEach(tag => tag.classList.add('exploded'));
+	}
+</script>
+
+<body>
+<!-- partial:index.partial.html -->
+<div class="tagcloud-wrapper">
+
+		<div class="tagcloud-controls" style="--num-elements: 20">
+
+				<div class="tagcloud-control-button" style="--index: 1"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 2"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 3"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 4"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 5"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 6"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 7"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 8"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 9"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 10"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 11"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 12"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 13"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 14"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 15"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 16"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 17"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 18"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 19"><input type="radio" name="tagcloud-control-input"></div>
+				<div class="tagcloud-control-button" style="--index: 20"><input type="radio" name="tagcloud-control-input"></div>
+
+				<div class="tagcloud-rotation">
+						<ul class="tagcloud-tags" style="--num-elements: 23">
+
+<!-- 
+								<li class="tagcloud-tag" style="--index: 1"><div><a href="www.baidu.com" target="_blank">天鹅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 2"><div><a href="www.baidu.com" target="_blank">优雅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 3"><div><a href="www.baidu.com" target="_blank">Mrs swan</a></div></li>
+								<li class="tagcloud-tag" style="--index: 4"><div><a href="www.baidu.com" target="_blank"></a>聪明</a></div></li>
+								<li class="tagcloud-tag" style="--index: 5"><div><a href="www.baidu.com" target="_blank"></a>美丽</a></div></li>
+								<li class="tagcloud-tag" style="--index: 6"><div><a href="www.baidu.com" target="_blank"></a>善良</a></div></li>
+								<li class="tagcloud-tag" style="--index: 7"><div><a href="www.baidu.com" target="_blank"></a>自信</a></div></li>
+								<li class="tagcloud-tag" style="--index: 8"><div><a href="www.baidu.com" target="_blank"></a>坚强</a></div></li>
+								<li class="tagcloud-tag" style="--index: 9"><div><a href="www.baidu.com" target="_blank"></a>热情</a></div></li>
+								<li class="tagcloud-tag" style="--index: 10"><div><a href="www.baidu.com" target="_blank"></a>勇敢</a></div></li>
+								<li class="tagcloud-tag" style="--index: 11"><div><a href="www.baidu.com" target="_blank"></a>独立</a></div></li>
+								<li class="tagcloud-tag" style="--index: 12"><div><a href="www.baidu.com" target="_blank"></a>体贴</a></div></li>
+								<li class="tagcloud-tag" style="--index: 13"><div><a href="www.baidu.com" target="_blank"></a>有才华</a></div></li>
+								<li class="tagcloud-tag" style="--index: 14"><div><a href="www.baidu.com" target="_blank"></a>温柔</a></div></li>
+								<li class="tagcloud-tag" style="--index: 15"><div><a href="www.baidu.com" target="_blank"></a>勤奋</a></div></li>
+								<li class="tagcloud-tag" style="--index: 16"><div><a href="www.baidu.com" target="_blank"></a>乐观</a></div></li>
+								<li class="tagcloud-tag" style="--index: 17"><div><a href="www.baidu.com" target="_blank"></a>魅力</a></div></li>
+								<li class="tagcloud-tag" style="--index: 18"><div><a href="www.baidu.com" target="_blank"></a>坚韧</a></div></li>
+								<li class="tagcloud-tag" style="--index: 19"><div><a href="www.baidu.com" target="_blank"></a>慷慨</a></div></li>
+								<li class="tagcloud-tag" style="--index: 20"><div><a href="www.baidu.com" target="_blank"></a>灵敏</a></div></li>
+								<li class="tagcloud-tag" style="--index: 21"><div><a href="www.baidu.com" target="_blank"></a>有趣</a></div></li>
+								<li class="tagcloud-tag" style="--index: 22"><div><a href="www.baidu.com" target="_blank"></a>细心</a></div></li> -->
+
+								<li class="tagcloud-tag" style="--index: 1"><div><a href="https://vuejs.org/" target="_blank" onclick="explodeTags(event)">天鹅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 2"><div><a href="https://nuxt.com/" target="_blank"  onclick="explodeTags(event)">优雅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 3"><div><a href="https://github.com/CesiumGS/cesium" target="_blank">Mrs swan</a></div></li>
+								<li class="tagcloud-tag" style="--index: 4"><div><a href="https://zzz.dog/" target="_blank">聪明</a></div></li>
+								<li class="tagcloud-tag" style="--index: 5"><div><a href="https://www.vantajs.com/" target="_blank">美丽</a></div></li>
+								<li class="tagcloud-tag" style="--index: 6"><div><a href="https://github.com/micku7zu/vanilla-tilt.js" target="_blank">善良</a></div></li>
+								<li class="tagcloud-tag" style="--index: 7"><div><a href="https://threejs.org/" target="_blank">自信</a></div></li>
+								<li class="tagcloud-tag" style="--index: 8"><div><a href="https://angularjs.org/" target="_blank">坚强</a></div></li>
+								<li class="tagcloud-tag" style="--index: 9"><div><a href="https://reactjs.org/" target="_blank">热情</a></div></li>
+								<li class="tagcloud-tag" style="--index: 10"><div><a href="https://svelte.dev/" target="_blank">勇敢</a></div></li>
+								<li class="tagcloud-tag" style="--index: 11"><div><a href="https://nextjs.org/" target="_blank">独立</a></div></li>
+								<li class="tagcloud-tag" style="--index: 12"><div><a href="https://www.gatsbyjs.com/" target="_blank">体贴</a></div></li>
+								<li class="tagcloud-tag" style="--index: 13"><div><a href="https://expressjs.com/" target="_blank">温柔</a></div></li>
+								<li class="tagcloud-tag" style="--index: 14"><div><a href="https://www.sencha.com/products/extjs/" target="_blank">勤奋</a></div></li>
+								<li class="tagcloud-tag" style="--index: 15"><div><a href="https://mithril.js.org/" target="_blank">乐观</a></div></li>
+								<li class="tagcloud-tag" style="--index: 16"><div><a href="https://backbonejs.org/" target="_blank">魅力</a></div></li>
+								<li class="tagcloud-tag" style="--index: 17"><div><a href="https://jquery.com/" target="_blank">坚韧</a></div></li>
+								<li class="tagcloud-tag" style="--index: 18"><div><a href="https://playcanvas.com/" target="_blank">慷慨</a></div></li>
+								<li class="tagcloud-tag" style="--index: 19"><div><a href="https://polymer-library.polymer-project.org/" target="_blank">灵敏</a></div></li>
+								<li class="tagcloud-tag" style="--index: 20"><div><a href="http://aurelia.io/" target="_blank">有趣</a></div></li>
+								<li class="tagcloud-tag" style="--index: 21"><div><a href="https://emberjs.com/" target="_blank">细心</a></div></li>
+
+						</ul>
+						<div> 测试</div>
+				</div>
+
+		</div>
+
+</div>
+<!-- partial -->
+  
+</body>
+</html>
