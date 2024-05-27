@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Cloud Shrink Effect</title>
+    <link rel="stylesheet" href="./style2.css">
+</head>
+<body>
+    <div class="tagcloud-wrapper">
+        <ul class="tagcloud-tags">
+            <li class="tagcloud-tag" style="--index: 1; --num-elements: 5;">
+                <div><a href="#" target="_blank" class="neon-effect" onclick="shrinkTags(event)">天鹅</a></div>
+            </li>
+            <!-- 添加更多标签 -->
+        </ul>
+    </div>
+    <script>
+        function shrinkTags(event) {
+            event.preventDefault();
+            const tags = document.querySelectorAll('.tagcloud-tag');
+            tags.forEach(tag => tag.classList.add('shrink'));
+        }
+    </script>
+</body>
+</html>
