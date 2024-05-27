@@ -91,7 +91,7 @@ tagcloud
 }
 
 .tagcloud-wrapper:has(.tagcloud-rotation:hover)  {
-    --tagcloud-animation-play-state: paused;
+    --tagcloud-animation-play-state: running;
 }
 
 .tagcloud-wrapper .tagcloud-tags {
@@ -290,4 +290,30 @@ tagcloud
     border-radius: 50%;
     transform: translate(-50%, -50%) rotate(calc(var(--_current-rotation) * 1deg));
     transition: transform var(--tagcloud-transition-user-duration) var(--tagcloud-transition-user-ease);
+}
+
+/*neon effect*/
+
+.neon-effect {
+    font-size: 36px;
+    color: #fff;
+    text-shadow: 
+        0 0 2px rgba(255, 255, 255, 0.8),
+        0 0 4px rgba(255, 255, 255, 0.7),
+        0 0 6px rgba(255, 0, 0, 0.6),
+        0 0 8px rgba(255, 0, 0, 0.5),
+        0 0 10px rgba(255, 0, 0, 0.4);
+    font-family: 'Pacifico', cursive; /* 可以使用类似的手写字体 */
+    transition: transform 0.3s, color 0.3s, text-shadow 0.3s;
+}
+
+.neon-effect:hover {
+    transform: scale(1.2);
+    color: #ff0;
+    text-shadow: 
+        0 0 5px rgba(255, 255, 0, 1),
+        0 0 10px rgba(255, 255, 0, 0.9),
+        0 0 15px rgba(255, 255, 0, 0.8),
+        0 0 20px rgba(255, 255, 0, 0.7),
+        0 0 25px rgba(255, 255, 0, 0.6);
 }
