@@ -11,17 +11,23 @@
 	function explodeTags(event) {
 		event.preventDefault();
 		const tags = document.querySelectorAll('.tagcloud-tag');
-		// tags.forEach(tag => tag.classList.add('exploded'));
-		tags.forEach(tag => {
-            tag.classList.remove('shrink');
-            tag.classList.add('gather-shrink');
-        });
+		tags.forEach(tag => tag.classList.add('exploded'));
 	}
 	function shrinkTags(event) {
             event.preventDefault();
             const tags = document.querySelectorAll('.tagcloud-tag');
-            tags.forEach(tag => tag.classList.add('shrink'));
+			tags.forEach(tag => {
+            tag.classList.remove('shrink');
+            tag.classList.add('gather-shrink');
+        });
         }
+	function gatherTags(event) {
+			event.preventDefault();
+			const tags = document.querySelectorAll('.tagcloud-tag');
+			tags.forEach(tag => {
+			tag.classList.add('approach');
+		});
+		}
 </script>
 <body>
 <!-- partial:index.partial.html -->
@@ -53,9 +59,9 @@
 				<div class="tagcloud-rotation">
 						<ul class="tagcloud-tags" style="--num-elements: 23">
 
-								<li class="tagcloud-tag" style="--index: 1"><div><a href=""target="_blank" onclick="explodeTags(event)" style="neon-effect">天鹅</a></div></li>
-								<li class="tagcloud-tag" style="--index: 2"><div><a href=""target="_blank"  onclick="explodeTags(event)" >优雅</a></div></li>
-								<li class="tagcloud-tag" style="--index: 3"><div><a href="" target="_blank">Mrs swan</a></div></li>
+								<li class="tagcloud-tag" style="--index: 1"><div><a href=""target="_blank" onclick="explodeTags(event)" style="font-size: 40px;">天鹅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 2"><div><a href=""target="_blank"  onclick="shrinkTags(event)" style="font-size: 40px;">优雅</a></div></li>
+								<li class="tagcloud-tag" style="--index: 3"><div><a href="" target="_blank" onclick="gatherTags(event)">Mrs swan</a></div></li>
 								<li class="tagcloud-tag" style="--index: 4"><div><a href=""target="_blank">聪明</a></div></li>
 								<li class="tagcloud-tag" style="--index: 5"><div><a href=""target="_blank">美丽</a></div></li>
 								<li class="tagcloud-tag" style="--index: 6"><div><a href="" target="_blank">善良</a></div></li>
