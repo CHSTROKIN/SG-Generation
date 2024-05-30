@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tag Cloud Ball Approach Animation with Fade-in Image</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --tagcloud-transition-user-duration: 1250ms;
+      --tagcloud-transition-user-ease: ease-in-out;
+      --tagcloud-transition-duration: 250ms;
+      --tagcloud-transition-ease: ease-out;
+      --tagcloud-bg-color-rgb: 0, 0, 0;
+      --tagcloud-animation-duration: 25s;
+      --tagcloud-animation-direction: normal;
+      --tagcloud-animation-play-state: running;
+      --tagcloud-diameter: 32rem;
+      --tagcloud-start-rotation: 54;
+      --tagcloud-controls-diameter: 256rem;
+      --tagcloud-control-bg-color: transparent;
+      --tagcloud-control-bg-hover-color: transparent;
+      --tagcloud-control-bg-checked-color: transparent;
+      --tag-diameter: 5.5rem;
+      --tag-font-color-rgb: 255, 255, 255;
+      --tag-font-family: 'Open Sans', sans-serif;
+      --tag-font-size: 1rem;
+    }
+
+    @import url(//fonts.googleapis.com/css?family=Open+Sans);
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      box-sizing: border-box;
+    }
+
+    *:focus {
+      outline: none;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: rgb(var(--tagcloud-bg-color-rgb));
+      overflow: hidden;
+    }
+
+    .tagcloud-wrapper {
+      --_control-diameter: var(--tagcloud-controls-diameter);
+      --_control-radius: calc(var(--_control-diameter) / 2);
+      --_diameter: var(--tagcloud-diameter);
+      --_radius: calc(calc(var(--_diameter) / 2) - calc(var(--tag-diameter) / 2));
+      width: var(--_control-diameter);
+      aspect-ratio: 1 / 1;
+      font-family: var(--tag-font-family);
+      font-size: var(--tag-font-size);
+      position: relative;
+      z-index: 1;
+    }
+
+    @media only screen and (max-width: 48rem) {
+      .tagcloud-wrapper {
+        --_control-diameter: calc(var(--tagcloud-controls-diameter) * 0.5);
+        --_diameter: calc(var(--tagcloud-diameter) * 0.88);
+      }
+    }
+
+    @media only screen and (max-width: 32rem) {
+      .tagcloud-wrapper {
+        --_diameter: calc(var(--tagcloud-diameter) * 0.75);
+      }
+    }
+
+    @keyframes tagcloud-rotation {
+      from {transform: translate(-50%, -50%) rotateX(0deg);}
+      to {transform: translate(-50%, -50%) rotateX(360deg);}
+    }
+    
+    .tagcloud-wrapper:has(.tagcloud-rotation:hover)  {
+        --tagcloud-animation-play-state: running;
+    }
+
+
+    .tagcloud-wrapper .tagcloud-tags {
+      position: absolute;
+      width: var(--_diameter);
+      aspect-ratio: 1 / 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      list-style-type: none;
+      transform-style: preserve-3d;
+      animation: tagcloud-rotation var(--tagcloud-animation-duration) var(--tagcloud-animation-direction) linear infinite var(--tagcloud-animation-play-state);
+    }
+
+    .tagcloud-wrapper .tagcloud-tag {
+      --_phi: acos(calc(-1 + (2 * var(--index)) / var(--num-elements)));
+      --_theta: calc(sqrt(calc(var(--num-elements) * 3.141592653589793)) * var(--_phi));
+      --_x: calc(cos(var(--_theta)) * sin(var(--_phi)));
+      --_y: calc(sin(var(--_theta)) * sin(var(--_phi)));
+      --_z: calc(cos(var(--_phi)));
+      --_vector-length: sqrt(var(--_x) * var(--_x) + var(--_y) * var(--_y) + var(--_z) * var(--_z));
+      --_normalized-x: calc(var(--_x) / var(--_vector-length));
+      --_normalized-y: calc(var(--_y) / var(--_vector-length));
+      --_normalized-z: calc(var(--_z) / var(--_vector-length));
+      --_scaled-x: calc(var(--_normalized-x) * var(--_radius));
+      --_scaled-y: calc(var(--_normalized-y) * var(--_radius));
+      --_scaled-z: calc(var(--_normalized-z) * var(--_radius));
+      --_final-x: calc(var(--_scaled-x) + var(--_radius));
+      --_final-y: calc(var(--_scaled-y) + var(--_radius));
+      --_final-z: var(--_scaled-z);
+      pointer-events: none;
+      width: var(--tag-diameter);
+      height: var(--tag-diameter); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      transition: opacity var(--tagcloud-transition-duration) var(--tagcloud-transition-ease);
+      transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+    }
+
+    .tagcloud-wrapper .tagcloud-tag div {
+      transform: rotateZ(calc(var(--_current-rotation) * -1deg));
+      transition: transform var(--tagcloud-transition-user-duration) var(--tagcloud-transition-user-ease);
+    }
+
+    .tagcloud-wrapper .tagcloud-tag div a {
+      pointer-events: initial;
+      color: rgb(var(--tag-font-color-rgb));
+      text-decoration: none;
+      text-shadow: 1px  1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  1px -1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  -1px  1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  -1px -1px 1px rgb(var(--tagcloud-bg-color-rgb)), 
+                  0 0 1rem rgb(var(--tagcloud-bg-color-rgb));
+    }
+
+    .tagcloud-wrapper .tagcloud-controls {
+      width: var(--_control-diameter);
+      aspect-ratio: 1 / 1;
+      position: relative;
+      --_current-rotation: var(--tagcloud-start-rotation);
+      transform-style: inherit;
+    }
+
+    @keyframes gatherAndShrink {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale(0.1);
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.gather-shrink {
+      animation: gatherAndShrink 1s forwards;
+    }
+
+    .shrink {
+      animation: shrink 1s forwards;
+    }
+
+    @keyframes shrink {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale(0.1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes explode {
+      0% {
+        transform: scale(1) translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3) translate3d(calc(var(--_final-x) * 3), calc(var(--_final-y) * 3), var(--_final-z));
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.exploded {
+      animation: explode 1s forwards;
+    }
+
+    @keyframes explodeUniform {
+      0% {
+        transform: scale(1) translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3) translate3d(calc(var(--_perendicular-x) * 3), calc(var(--_perendicular-y) * 3), var(--_perendicular        -z));
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.exploded-uniform {
+      animation: explodeUniform 1s forwards;
+    }
+
+    @keyframes ball-approach {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      80% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 1000px) scale(10);
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper.approach {
+      animation: ball-approach 2s ease-in-out forwards;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    #fade-in-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      z-index: 2;
+    }
+
+    #fade-in-image.show {
+      animation: fade-in 1s forwards;
+    }
+
+    @keyframes draw {
+      from {
+        stroke-dasharray: 0, 1000;
+      }
+      to {
+        stroke-dasharray: 1000, 0;
+      }
+    }
+
+    .cls-1, .cls-2 {
+      fill: none;
+      stroke: white;
+      stroke-width: 2;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+    }
+
+    .cls-1.draw1, .cls-2.draw2 {
+      animation: draw 5s forwards;
+    }
+
+    .cls-1.draw1 {
+      animation-delay: 3s;
+    }
+
+    .cls-2.draw2 {
+      animation-delay: 3s;
+    }
+
+    #trigger-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 3; /* Ensuring the button is above other elements */
+    }
+
+    #trigger-button:hover {
+      background-color: #0056b3;
+    }
+
+    #trigger-button:active {
+      background-color: red;
+    }
+
+    #animation-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2; /* Ensuring the SVG is at the front */
+    }
+  </style>
+</head>
+<script>
+function triggerBallApproach() {
+  const wrapper = document.querySelector('.tagcloud-wrapper');
+  const image = document.querySelector('#fade-in-image');
+  
+  wrapper.classList.add('approach');
+
+  // Ensure the image fades in after the ball-approach animation completes
+  setTimeout(() => {
+    image.classList.add('show');
+  }, 2000); // The timeout duration should match the ball-approach animation duration
+
+  // Trigger the drawing animations for the curves
+//   setTimeout(() => {
+//     document.querySelector('.cls-1').classList.add('draw1');
+//   document.querySelectorAll('.cls-2').forEach(el => el.classList.add('draw2'));
+//   }, 2000);
+document.querySelector('.cls-1').classList.add('draw1');
+  document.querySelectorAll('.cls-2').forEach(el => el.classList.add('draw2'));
+}
+function playAnime() {
+    const wrapper = document.querySelector('.tagcloud-wrapper');
+  const image = document.querySelector('#fade-in-image');
+  
+  wrapper.classList.add('approach');
+
+  // Ensure the image fades in after the ball-approach animation completes
+  setTimeout(() => {
+    image.classList.add('show');
+  }, 2000); // The timeout duration should match the ball-approach animation duration
+  document.querySelector('.cls-1').classList.add('draw1');
+  document.querySelectorAll('.cls-2').forEach(el => el.classList.add('draw2'));
+  
+}
+</script>
+<body>
+  <div class="tagcloud-wrapper">
+    <div class="tagcloud-controls" style="--num-elements: 20">
+      <div class="tagcloud-control-button" style="--index: 1"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 2"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 3"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 4"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 5"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 6"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 7"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 8"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 9"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 10"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 11"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 12"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 13"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 14"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 15"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 16"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 17"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 18"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 19"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 20"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-rotation">
+        <ul class="tagcloud-tags" style="--num-elements: 20">
+          <li class="tagcloud-tag" style="--index: 1"><div><a href="#" onclick="triggerBallApproach()">Miss Swan</a></div></li>
+          <li class="tagcloud-tag" style="--index: 2"><div><a href="#">天鹅</a></div></li>
+          <li class="tagcloud-tag" style="--index: 3"><div><a href="#">勇敢</a></div></li>
+          <li class="tagcloud-tag" style="--index: 4"><div><a href="#">美丽</a></div></li>
+          <li class="tagcloud-tag" style="--index: 5"><div><a href="#">自信</a></div></li>
+          <li class="tagcloud-tag" style="--index: 6"><div><a href="#">善良</a></div></li>
+          <li class="tagcloud-tag" style="--index: 7"><div><a href="#">优雅</a></div></li>
+          <li class="tagcloud-tag" style="--index: 8"><div><a href="#">谦逊</a></div></li>
+          <li class="tagcloud-tag" style="--index: 9"><div><a href="#">独立</a></div></li>
+          <li class="tagcloud-tag" style="--index: 10"><div><a href="#">坚强</a></div></li>
+          <li class="tagcloud-tag" style="--index: 11"><div><a href="#">体贴</a></div></li>
+          <li class="tagcloud-tag" style="--index: 12"><div><a href="#">温柔</a></div></li>
+          <li class="tagcloud-tag" style="--index: 13"><div><a href="#">勤奋</a></div></li>
+          <li class="tagcloud-tag" style="--index: 14"><div><a href="#">乐观</a></div></li>
+          <li class="tagcloud-tag" style="--index: 15"><div><a href="#">魅力</a></div></li>
+          <li class="tagcloud-tag" style="--index: 16"><div><a href="#">坚韧</a></div></li>
+          <li class="tagcloud-tag" style="--index: 17"><div><a href="#">慷慨</a></div></li>
+          <li class="tagcloud-tag" style="--index: 18"><div><a href="#">灵敏</a></div></li>
+          <li class="tagcloud-tag" style="--index: 19"><div><a href="#">有趣</a></div></li>
+          <li class="tagcloud-tag" style="--index: 20"><div><a href="#">细心</a></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="animation-container">
+    <svg width="800" height="800" viewBox="0 0 800 800">
+      <path class="cls-1" d="M84.39.17s3.81,10.29,3.81,13.91,4.88,8.7,4.88,8.7c0,0,12.01,11.59,21.82,18.55s0,5.22,0,5.22c0,0-5.99,1.16-27.24-16.81S57.15,3.65,57.15,3.65c0,0-6.54-2.32-14.16,6.38s-14.16,20.29-26.15,53.33C4.86,96.41.5,103.94.5,113.22s1.09,10.43,3.81,13.33,29.42-5.8,29.42-5.8l50.66-19.13s7.08-1.74,11.44,6.38,7.08,5.22,7.08,5.22l5.99-2.32,1.71-3.2h2.38l1.26-2.24,1.68-.6,1.26-1.64,2.05-5.22,1.79-4.8s-6.39-6.41-9.4-8.41-7.52-3.2-7.52-3.2l-19.94-.8s-4.89-.8-7.52.4-7.9,4-7.9,4c0,0-6.39,5.2-16.93,6.41s-22.57.8-22.57.8c0,0-2.63-.4-6.77,4.4"/>
+      <path class="cls-2" d="M34.22,92.46s11.37-20.45,17.57-31.44c6.2-11,11.37-9.16,11.37-9.16"/>
+      <path class="cls-2" d="M99.27,112.7s-2.85,7.67-14.23,22.19-25.48,27.19-28.21,42.65c-2.73,15.45-5,22.23,1.82,35.3s9.55,12.59,15.01,20.82,36.4,58.1,36.4,58.1"/>
+      <path class="cls-2" d="M63.16,223.98s-9.42-1.45-14.47-7.75c-5.05-6.29-10.96-16.95-10.96-18.88s-1.36,1.94,2.73,13.31,13.7,31.23,13.7,31.23c0,0-.51,8.23,2.22,23.24s10.92,44.54,10.92,44.54"/>
+      <path class="cls-2" d="M104.22,282.35s-1.29,5.05,0,14.73"/>
+      <path class="cls-2" d="M113,107.7s5.71,3.95,6.17,15.08.45,19.37,0,29.05-.45,20.33,5.46,34.86,6.82,9.68,14.1,41.15c7.28,31.47,6.82,40.19,14.1,56.65"/>
+    </svg>
+    <img id="fade-in-image" src="t1.png" alt="Fade-in Image">
+  </div>
+  <button onclick="playAnime()" id="trigger-button">Start Animation</button>
+</body>
+</html>

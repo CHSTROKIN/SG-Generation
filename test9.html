@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tag Cloud Ball Approach Animation with Fade-in Image</title>
+  <style>
+    :root {
+      --tagcloud-transition-user-duration: 1250ms;
+      --tagcloud-transition-user-ease: ease-in-out;
+      --tagcloud-transition-duration: 250ms;
+      --tagcloud-transition-ease: ease-out;
+      --tagcloud-bg-color-rgb: 0, 0, 0;
+      --tagcloud-animation-duration: 25s;
+      --tagcloud-animation-direction: normal;
+      --tagcloud-animation-play-state: running;
+      --tagcloud-diameter: 32rem;
+      --tagcloud-start-rotation: 54;
+      --tagcloud-controls-diameter: 256rem;
+      --tagcloud-control-bg-color: transparent;
+      --tagcloud-control-bg-hover-color: transparent;
+      --tagcloud-control-bg-checked-color: transparent;
+      --tag-diameter: 5.5rem;
+      --tag-font-color-rgb: 255, 255, 255;
+      --tag-font-family: 'Open Sans', sans-serif;
+      --tag-font-size: 1rem;
+    }
+
+    @import url(//fonts.googleapis.com/css?family=Open+Sans);
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      box-sizing: border-box;
+    }
+
+    *:focus {
+      outline: none;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: rgb(var(--tagcloud-bg-color-rgb));
+      overflow: hidden;
+    }
+
+    .tagcloud-wrapper {
+      --_control-diameter: var(--tagcloud-controls-diameter);
+      --_control-radius: calc(var(--_control-diameter) / 2);
+      --_diameter: var(--tagcloud-diameter);
+      --_radius: calc(calc(var(--_diameter) / 2) - calc(var(--tag-diameter) / 2));
+      width: var(--_control-diameter);
+      aspect-ratio: 1 / 1;
+      font-family: var(--tag-font-family);
+      font-size: var(--tag-font-size);
+      position: relative;
+    }
+
+    @media only screen and (max-width: 48rem) {
+      .tagcloud-wrapper {
+        --_control-diameter: calc(var(--tagcloud-controls-diameter) * 0.5);
+        --_diameter: calc(var(--tagcloud-diameter) * 0.88);
+      }
+    }
+
+    @media only screen and (max-width: 32rem) {
+      .tagcloud-wrapper {
+        --_diameter: calc(var(--tagcloud-diameter) * 0.75);
+      }
+    }
+
+    @keyframes tagcloud-rotation {
+      from {transform: translate(-50%, -50%) rotateX(0deg);}
+      to {transform: translate(-50%, -50%) rotateX(360deg);}
+    }
+
+    .tagcloud-wrapper .tagcloud-tags {
+      position: absolute;
+      width: var(--_diameter);
+      aspect-ratio: 1 / 1;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      list-style-type: none;
+      transform-style: preserve-3d;
+      animation: tagcloud-rotation var(--tagcloud-animation-duration) var(--tagcloud-animation-direction) linear infinite var(--tagcloud-animation-play-state);
+    }
+
+    .tagcloud-wrapper .tagcloud-tag {
+      --_phi: acos(calc(-1 + (2 * var(--index)) / var(--num-elements)));
+      --_theta: calc(sqrt(calc(var(--num-elements) * 3.141592653589793)) * var(--_phi));
+      --_x: calc(cos(var(--_theta)) * sin(var(--_phi)));
+      --_y: calc(sin(var(--_theta)) * sin(var(--_phi)));
+      --_z: calc(cos(var(--_phi)));
+      --_vector-length: sqrt(var(--_x) * var(--_x) + var(--_y) * var(--_y) + var(--_z) * var(--_z));
+      --_normalized-x: calc(var(--_x) / var(--_vector-length));
+      --_normalized-y: calc(var(--_y) / var(--_vector-length));
+      --_normalized-z: calc(var(--_z) / var(--_vector-length));
+      --_scaled-x: calc(var(--_normalized-x) * var(--_radius));
+      --_scaled-y: calc(var(--_normalized-y) * var(--_radius));
+      --_scaled-z: calc(var(--_normalized-z) * var(--_radius));
+      --_final-x: calc(var(--_scaled-x) + var(--_radius));
+      --_final-y: calc(var(--_scaled-y) + var(--_radius));
+      --_final-z: var(--_scaled-z);
+      pointer-events: none;
+      width: var(--tag-diameter);
+      height: var(--tag-diameter); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      transition: opacity var(--tagcloud-transition-duration) var(--tagcloud-transition-ease);
+      transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+    }
+
+    .tagcloud-wrapper .tagcloud-tag div {
+      transform: rotateZ(calc(var(--_current-rotation) * -1deg));
+      transition: transform var(--tagcloud-transition-user-duration) var(--tagcloud-transition-user-ease);
+    }
+
+    .tagcloud-wrapper .tagcloud-tag div a {
+      pointer-events: initial;
+      color: rgb(var(--tag-font-color-rgb));
+      text-decoration: none;
+      text-shadow: 1px  1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  1px -1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  -1px  1px 1px rgb(var(--tagcloud-bg-color-rgb)),
+                  -1px -1px 1px rgb(var(--tagcloud-bg-color-rgb)), 
+                  0 0 1rem rgb(var(--tagcloud-bg-color-rgb));
+    }
+
+    .tagcloud-wrapper .tagcloud-controls {
+      width: var(--_control-diameter);
+      aspect-ratio: 1 / 1;
+      position: relative;
+      --_current-rotation: var(--tagcloud-start-rotation);
+      transform-style: inherit;
+    }
+
+    @keyframes gatherAndShrink {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale(0.1);
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.gather-shrink {
+      animation: gatherAndShrink 1s forwards;
+    }
+
+    .shrink {
+      animation: shrink 1s forwards;
+    }
+
+    @keyframes shrink {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 0) scale(0.1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes explode {
+      0% {
+        transform: scale(1) translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3) translate3d(calc(var(--_final-x) * 3), calc(var(--_final-y) * 3), var(--_final-z));
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.exploded {
+      animation: explode 1s forwards;
+    }
+
+    @keyframes explodeUniform {
+      0% {
+        transform: scale(1) translate3d(var(--_final-x), var(--_final-y), var(--_final-z));
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3) translate3d(calc(var(--_perendicular-x) * 3), calc(var(--_perendicular-y) * 3), var(--_perendicular-z));
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper .tagcloud-tag.exploded-uniform {
+      animation: explodeUniform 1s forwards;
+    }
+
+    @keyframes ball-approach {
+      0% {
+        transform: translate3d(var(--_final-x), var(--_final-y), var(--_final-z)) scale(1);
+        opacity: 1;
+      }
+      80% {
+        transform: translate3d(0, 0    0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(0, 0, 1000px) scale(10);
+        opacity: 0;
+      }
+    }
+
+    .tagcloud-wrapper.approach {
+      animation: ball-approach 2s ease-in-out forwards;
+    }
+
+    @keyframes mdraw {
+  from {
+    stroke-dashoffset: 1000; /* Start with the stroke offset, hiding the path */
+  }
+  to {
+    stroke-dashoffset: 0; /* End with no offset, revealing the full path */
+  }
+}
+
+@keyframes mdraw2 {
+  from {
+    stroke-dasharray: 0, 1000; /* Start with the stroke offset, hiding the path */
+  }
+  to {
+    stroke-dasharray: 1000, 0; /* End with no offset, revealing the full path */
+  }
+}
+
+.cls-1, .cls-2 {
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation-fill-mode: forwards;
+}
+
+.cls-1.draw1 {
+  animation: mdraw2 5s forwards;
+  animation-delay: 1s;
+}
+
+.cls-2.draw2 {
+  animation: mdraw 5s forwards;
+  animation-delay: 2s;
+}
+
+  </style>
+</head>
+<body>
+  <div class="tagcloud-wrapper">
+    <div class="tagcloud-controls" style="--num-elements: 20">
+      <div class="tagcloud-control-button" style="--index: 1"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 2"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 3"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 4"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 5"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 6"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 7"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 8"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 9"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 10"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 11"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 12"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 13"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 14"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 15"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 16"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 17"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 18"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 19"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-control-button" style="--index: 20"><input type="radio" name="tagcloud-control-input"></div>
+      <div class="tagcloud-rotation">
+        <ul class="tagcloud-tags" style="--num-elements: 20">
+          <li class="tagcloud-tag" style="--index: 1"><div><a href="#" onclick="triggerBallApproach()">Tag 1</a></div></li>
+          <li class="tagcloud-tag" style="--index: 2"><div><a href="#">Tag 2</a></div></li>
+          <li class="tagcloud-tag" style="--index: 3"><div><a href="#">Tag 3</a></div></li>
+          <li class="tagcloud-tag" style="--index: 4"><div><a href="#">Tag 4</a></div></li>
+          <li class="tagcloud-tag" style="--index: 5"><div><a href="#">Tag 5</a></div></li>
+          <li class="tagcloud-tag" style="--index: 6"><div><a href="#">Tag 6</a></div></li>
+          <li class="tagcloud-tag" style="--index: 7"><div><a href="#">Tag 7</a></div></li>
+          <li class="tagcloud-tag" style="--index: 8"><div><a href="#">Tag 8</a></div></li>
+          <li class="tagcloud-tag" style="--index: 9"><div><a href="#">Tag 9</a></div></li>
+          <li class="tagcloud-tag" style="--index: 10"><div><a href="#">Tag 10</a></div></li>
+          <li class="tagcloud-tag" style="--index: 11"><div><a href="#">Tag 11</a></div></li>
+          <li class="tagcloud-tag" style="--index: 12"><div><a href="#">Tag 12</a></div></li>
+          <li class="tagcloud-tag" style="--index: 13"><div><a href="#">Tag 13</a></div></li>
+          <li class="tagcloud-tag" style="--index: 14"><div><a href="#">Tag 14</a></div></li>
+          <li class="tagcloud-tag" style="--index: 15"><div><a href="#">Tag 15</a></div></li>
+          <li class="tagcloud-tag" style="--index: 16"><div><a href="#">Tag 16</a></div></li>
+          <li class="tagcloud-tag" style="--index: 17"><div><a href="#">Tag 17</a></div></li>
+          <li class="tagcloud-tag" style="--index: 18"><div><a href="#">Tag 18</a></div></li>
+          <li class="tagcloud-tag" style="--index: 19"><div><a href="#">Tag 19</a></div></li>
+          <li class="tagcloud-tag" style="--index: 20"><div><a href="#">Tag 20</a></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <img id="fade-in-image" src="t1.png" alt="Fade-in Image">
+
+  <button onclick="triggerBallApproach()">Start Animation</button>
+  <svg width="800" height="800" viewBox="0 0 800 800">
+    <path class="cls-1" id="cls-1" d="M196.79.17s8.92,25.45,8.92,34.41,11.41,21.51,11.41,21.51c0,0,28.11,28.67,51.05,45.88,22.94,17.2,0,12.9,0,12.9,0,0-14.02,2.87-63.73-41.58C154.73,28.84,133.06,8.77,133.06,8.77c0,0-15.3-5.73-33.14,15.77-17.84,21.51-33.14,50.18-61.18,131.9C10.7,238.16.5,256.8.5,279.74s2.55,25.81,8.92,32.98,68.83-14.34,68.83-14.34l118.54-47.31s16.57-4.3,26.77,15.77c10.2,20.07,16.57,12.9,16.57,12.9l14.02-5.73,4-7.91h5.58l2.95-5.54,3.94-1.48,2.95-4.06,4.8-12.92,4.2-11.88s-14.96-15.84-22-20.79-17.6-7.92-17.6-7.92l-46.65-1.98s-11.44-1.98-17.6.99-18.48,9.9-18.48,9.9c0,0-14.96,12.87-39.61,15.84s-52.81,1.98-52.81,1.98c0,0-6.16-.99-15.84,10.89"/>
+    <path class="cls-2" id="cls-2-1" d="M79.41,228.41s26.6-50.57,41.1-77.76c14.51-27.2,26.6-22.66,26.6-22.66"/>
+    <path class="cls-2" id="cls-2-2" d="M231.61,278.45s-6.68,18.97-33.29,54.89c-26.61,35.92-59.61,67.25-66,105.47-6.39,38.22-11.71,54.98,4.26,87.31s22.35,31.13,35.13,51.49c12.77,20.36,85.16,143.69,85.16,143.69"/>
+    <path class="cls-2" id="cls-2-3" d="M147.11,553.66s-22.04-3.59-33.85-19.16c-11.81-15.57-25.65-41.91-25.65-46.7s-3.19,4.79,6.39,32.93,32.06,77.23,32.06,77.23c0,0-1.19,20.36,5.19,57.47,6.39,37.12,25.55,110.16,25.55,110.16"/>
+    <path class="cls-2" id="cls-2-4" d="M243.2,698.03s-3.03,12.49,0,36.43"/>
+    <path class="cls-2" id="cls-2-5" d="M263.73,266.1s13.37,9.77,14.43,37.31c1.06,27.54,1.06,47.9,0,71.84-1.06,23.95-1.06,50.29,12.77,86.21,13.84,35.92,15.97,23.95,33,101.78,17.03,77.83,15.97,99.38,33,140.09"/>
+  </svg>
+  
+
+  <script>
+function triggerBallApproach() {
+  const wrapper = document.querySelector('.tagcloud-wrapper');
+  const image = document.querySelector('#fade-in-image');
+  
+  wrapper.classList.add('approach');
+
+  // Ensure the image fades in after the ball-approach animation completes
+  setTimeout(() => {
+    image.classList.add('show');
+  }, 2000); // The timeout duration should match the ball-approach animation duration
+
+  // Trigger the drawing animations for the curves
+  setTimeout(() => {
+    document.querySelector('#cls-1').classList.add('draw1');
+    document.querySelector('#cls-2-1').classList.add('draw2');
+    document.querySelector('#cls-2-2').classList.add('draw2');
+    document.querySelector('#cls-2-3').classList.add('draw2');
+    document.querySelector('#cls-2-4').classList.add('draw2');
+    document.querySelector('#cls-2-5').classList.add('draw2');
+  }, 2000);
+
+  </script>
+</body>
+</html>
+
+
